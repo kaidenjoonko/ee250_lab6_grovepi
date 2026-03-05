@@ -1,5 +1,5 @@
-# Lab 6: GrovePi Sensors
-# Team Members: Kaiden Joonko, <partner name here>
+# lab 6: grovepi sensors
+# team members: Kaiden Joon Ko
 
 import sys
 sys.path.append('~/Dexter/GrovePi/Software/Python')
@@ -7,34 +7,36 @@ import time
 import grovepi
 from grove_rgb_lcd import *
 
-# Grove Ultrasonic Ranger connected to digital port 2
-ultrasonic_ranger = 2
-# potentiometer connected to analog port A0 as input
-potentiometer = 0
-grovepi.pinMode(potentiometer, "INPUT")
+# sensor ports
+us = 2
+pot = 0
+grovepi.pinMode(pot, "INPUT")
 
-# clear lcd screen before starting main loop
+# clear lcd
 setText("")
 setRGB(0, 255, 0)
 
 while True:
     try:
-        # Read distance value from Ultrasonic Ranger
-        distance = grovepi.ultrasonicRead(ultrasonic_ranger)
+        # read sensors
+        dist = grovepi.ultrasonicRead(us)
+        thresh = grovepi.analogRead(pot)
 
-        # Read threshold from potentiometer
-        threshold = grovepi.analogRead(potentiometer)
-
-        # Format LCD text according to threshold
-        if distance < threshold:
-            top_line = str(threshold) + " OBJ PRES"
+        # build top line
+        if dist < thresh:
+            top = str(thresh) + " OBJ PRES"
         else:
-            top_line = str(threshold) + " "
+            top = str(thresh) + " "
 
-        bottom_line = str(distance)
+        # build bottom line
+        bot = str(dist)
 
-        lcd_text = top_line + "\n" + bottom_line
-        setText_norefresh(lcd_text)
+        # pad lines to clear leftover chars
+        top = top.ljust(16)
+        bot = bot.ljust(16)
+
+        # update lcd
+        setText_norefresh(top + "\n" + bot)
 
         time.sleep(0.2)
 
@@ -44,3 +46,4 @@ while True:
         break
     except IOError:
         print("Error")
+
